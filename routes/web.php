@@ -24,6 +24,7 @@ Route::resources([
     'posts' => PostController::class,
 ]);
 
+Route::post('posts/{id}/update', [PostController::class, 'update']);
 Route::get('posts/{id}/delete', [PostController::class, 'destroy']);
 
 Route::post('comments', [CommentController::class, 'create']);

@@ -26,8 +26,17 @@ class PostController extends Controller
         return view('post.show', compact('post'));
     }
 
-    public function edit($slug) {
-        return view('post.edit', compact('slug'));
+    public function edit($id) {
+        $post = Post::with('tags')->where('id', $id)->first();
+        $tags = array();
+
+        foreach ($post->tags as $tag) {
+            array_push($tags, $tag->name);
+        }
+
+        $tags = implode(',', $tags);
+
+        return view('post.edit', compact('post'), compact('tags'));
     }
 
     public function store(Request $request) {
@@ -37,9 +46,10 @@ class PostController extends Controller
         $post->save();
 
         $existing_tags = Tag::all();
+        $existing_tags_array = array();
         
-        if (!is_array($existing_tags)) {
-            $existing_tags = [];
+        foreach ($existing_tags as $exist_tag) {
+            array_push($existing_tags_array, $exist_tag->name);
         }
 
         $tags = explode(",", $request->tags);
@@ -48,7 +58,7 @@ class PostController extends Controller
             $add_tag = new Post_Tag;
             $add_tag->post_id = $post->id;
 
-            if (in_array($tags[$i], array_column($existing_tags, 'name'))) {
+            if (in_array($tags[$i], $existing_tags_array)) {
                 $get_tag = Tag::where('name', $tags[$i])->first();
 
                 $add_tag->tag_id = $get_tag->id;
@@ -65,8 +75,49 @@ class PostController extends Controller
 
         return redirect()->route('posts.index');
     }
+    
+    public function update(Request $request, $id) {
+        $post = Post::find($id);
+        $post->title = $request->title;
+        $post->content = $request->content;
+        $post->update();
+        
+        Post_Tag::where('post_id', $post->id)->delete();
 
+        $existing_tags = Tag::all();
+        $existing_tags_array = array();
+        
+        foreach ($existing_tags as $exist_tag) {
+            array_push($existing_tags_array, $exist_tag->name);
+        }
+
+        $tags = explode(",", $request->tags);
+        
+        for ($i = 0; $i < count($tags); $i++) {
+            $add_tag = new Post_Tag;
+            $add_tag->post_id = $post->id;
+
+            if (in_array($tags[$i], $existing_tags_array)) {
+                $get_tag = Tag::where('name', $tags[$i])->first();
+
+                $add_tag->tag_id = $get_tag->id;
+            } else {
+                $tag = new Tag;
+                $tag->name = $tags[$i];
+                $tag->save();
+                
+                $add_tag->tag_id = $tag->id;
+            }
+            
+            $add_tag->save();
+        }
+        
+        return redirect()->route('posts.index');
+    }
+    
     public function destroy($id) {
+        Post_Tag::where('post_id', $id)->delete();
+        Comment::where('post_id', $id)->delete();
         Post::where('id', $id)->delete();
         return redirect()->route('posts.index');
     }
