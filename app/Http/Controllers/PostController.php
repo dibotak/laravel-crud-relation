@@ -37,13 +37,18 @@ class PostController extends Controller
         $post->save();
 
         $existing_tags = Tag::all();
+        
+        if (!is_array($existing_tags)) {
+            $existing_tags = [];
+        }
+
         $tags = explode(",", $request->tags);
         
         for ($i = 0; $i < count($tags); $i++) {
             $add_tag = new Post_Tag;
             $add_tag->post_id = $post->id;
 
-            if (in_array($tags[$i], $existing_tags)) {
+            if (in_array($tags[$i], array_column($existing_tags, 'name'))) {
                 $get_tag = Tag::where('name', $tags[$i])->first();
 
                 $add_tag->tag_id = $get_tag->id;

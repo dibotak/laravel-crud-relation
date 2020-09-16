@@ -9,6 +9,9 @@
   <hr>
   
   <h4>Tags</h4>
+  @foreach($post->tags as $tag)
+    <a href="/tags/{{ $tag->name }}">{{ $tag->name }}</a>
+  @endforeach
 
   <hr>
 

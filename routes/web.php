@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\TagController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,3 +27,6 @@ Route::resources([
 Route::get('posts/{id}/delete', [PostController::class, 'destroy']);
 
 Route::post('comments', [CommentController::class, 'create']);
+
+Route::get('tags', [TagController::class, 'index']);
+Route::get('tags/{tag}', [TagController::class, 'show']);
