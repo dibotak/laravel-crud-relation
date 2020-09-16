@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\CommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,4 +23,6 @@ Route::resources([
     'posts' => PostController::class,
 ]);
 
-Route::get('posts/delete/{id}', [PostController::class, 'destroy']);
+Route::get('posts/{id}/delete', [PostController::class, 'destroy']);
+
+Route::post('comments', [CommentController::class, 'create']);

@@ -4,10 +4,17 @@
 
 @section('content')
   <h1>Create Post disini</h1>
+
   <form action="/posts" method="post">
     @csrf
-    <input name="title" type="text" placeholder="Title">
-    <textarea name="content" id="" cols="30" rows="10"></textarea>
-    <button type="submit">input</button>
+    <div class="form-group">
+      <label for="title">Title</label>
+      <input type="text" class="form-control" id="title" aria-describedby="emailHelp" name="title">
+    </div>
+    <div class="form-group">
+      <label for="content">Content</label>
+      <textarea class="form-control" id="content" rows="3" name="content"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
   </form>
 @endsection

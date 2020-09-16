@@ -1,22 +1,30 @@
 @extends('layouts.app')
 
-@section('title', 'Page Title')
-
-@section('sidebar')
-  @parent
-
-  <p>This is appended to the master sidebar.</p>
-@endsection
+@section('title', 'Posts')
 
 @section('content')
-  <h1>halaman index post</h1>
-  
+  <h1>Posts</h1>
+
+  <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Judul</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
   @foreach($posts as $post)
-  <div>
-    <h3>{{ $post->title }}</h3>
-    <a href="/posts/{{ $post->id }}">detail</a>
-    <a href="/posts/{{ $post->id }}/edit">edit</a>
-    <a href="/posts/delete/{{ $post->id }}">delete</a>
-  </div>
+    <tr>
+      <th scope="row">{{ $loop->iteration }}</th>
+      <td>{{ $post->title }}</td>
+      <td>
+        <a href="/posts/{{ $post->id }}" class="btn btn-sm btn-primary">detail</a>
+        <a href="/posts/{{ $post->id }}/edit" class="btn btn-sm btn-success">edit</a>
+        <a href="/posts/{{ $post->id }}/delete" class="btn btn-sm btn-danger">delete</a>
+      </td>
+    </tr>
   @endforeach
+  </tbody>
+</table>
 @endsection

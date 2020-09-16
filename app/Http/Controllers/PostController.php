@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Comment;
+use App\Models\Post_Tag;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -18,7 +21,7 @@ class PostController extends Controller
     }
 
     public function show($id) {
-        $post = Post::where('id', $id)->first();
+        $post = Post::with('comments')->where('id', $id)->first();
 
         return view('post.show', compact('post'));
     }
@@ -32,6 +35,29 @@ class PostController extends Controller
         $post->title = $request->title;
         $post->content = $request->content;
         $post->save();
+
+        $existing_tags = Tag::all();
+        $tags = explode(",", $request->tags);
+        
+        for ($i = 0; $i < count($tags); $i++) {
+            $add_tag = new Post_Tag;
+            $add_tag->post_id = $post->id;
+
+            if (in_array($tags[$i], $existing_tags)) {
+                $get_tag = Tag::where('name', $tags[$i])->first();
+
+                $add_tag->tag_id = $get_tag->id;
+            } else {
+                $tag = new Tag;
+                $tag->name = $tags[$i];
+                $tag->save();
+
+                $add_tag->tag_id = $tag->id;
+            }
+            
+            $add_tag->save();
+        }
+
         return redirect()->route('posts.index');
     }
 
